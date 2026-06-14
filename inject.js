@@ -1,5 +1,5 @@
 /**
- * Content script - 按需注入
+ * Content script - 页面加载即注入核心脚本
  */
 (function() {
   'use strict';
@@ -13,20 +13,10 @@
     injected = true;
   }
 
-  function remove() {
-    var cover = document.getElementById('wcv-cover'); if (cover) cover.remove();
-    var styles = document.querySelectorAll('[id^="wcv-core-css"]');
-    styles.forEach(function(el) { el.remove(); });
-    injected = false;
-  }
-
-  chrome.storage.local.get(['enabled'], function(r) {
-    if (r.enabled === true) inject();
-  });
+  // 页面加载即注入
+  inject();
 
   chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
-    if (msg.action === 'enable')  { inject(); sendResponse({ ok: true }); }
-    if (msg.action === 'disable') { remove(); sendResponse({ ok: true }); }
     if (msg.action === 'export') {
       inject();
       setTimeout(function() { window.postMessage({ type: 'WCV_EXPORT' }, '*'); }, 300);
