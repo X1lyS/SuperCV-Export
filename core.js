@@ -116,7 +116,8 @@
 
     nukeAfterInsert(cover);
 
-    requestAnimationFrame(function() { requestAnimationFrame(function() { window.print(); }); });
+    // 直接调用打印, 不用 RAF 链(避免丢失用户手势上下文)
+    setTimeout(function() { window.print(); }, 100);
 
     var done = function() {
       cover.classList.remove('on');
