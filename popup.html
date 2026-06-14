@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperCV Export</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 320px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif; background: #fff; color: #333; }
+  .header { background: #fff; border-bottom: 1px solid #f0f0f0; padding: 20px 24px 16px; display: flex; align-items: center; gap: 12px; }
+  .header .logo { width: 36px; height: 36px; background: #dc2127; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; font-weight: 700; flex-shrink: 0; }
+  .header .info h1 { font-size: 14px; font-weight: 600; color: #1a1a1a; line-height: 1.3; }
+  .header .info p { font-size: 11px; color: #999; margin-top: 1px; }
+  .body { padding: 16px 24px 20px; }
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f5f5f5; margin-bottom: 14px; }
+  .toggle-label { font-size: 13px; color: #444; font-weight: 500; }
+  .toggle-label .sub { display: block; font-size: 11px; color: #aaa; font-weight: 400; margin-top: 2px; }
+  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .slider { position: absolute; inset: 0; background: #ddd; border-radius: 24px; cursor: pointer; transition: background .2s; }
+  .switch .slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+  .switch input:checked + .slider { background: #dc2127; }
+  .switch input:checked + .slider::before { transform: translateX(20px); }
+  .btn-export { width: 100%; padding: 11px 0; background: #dc2127; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: .5px; transition: background .15s, opacity .15s; }
+  .btn-export:hover:not(:disabled) { background: #c01d22; }
+  .btn-export:active:not(:disabled) { background: #b01a1f; }
+  .btn-export:disabled { background: #e8e8e8; color: #bbb; cursor: not-allowed; }
+  .status-row { display: flex; align-items: center; gap: 7px; margin-top: 12px; font-size: 12px; color: #aaa; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .status-dot.off { background: #ddd; }
+  .status-dot.on { background: #52c41a; }
+  .status-dot.err { background: #dc2127; }
+  .hint { margin-top: 12px; font-size: 11px; color: #bbb; text-align: center; letter-spacing: .2px; }
+  .hint kbd { display: inline-block; padding: 1px 5px; border: 1px solid #e8e8e8; border-radius: 3px; background: #fafafa; font-family: inherit; font-size: 10px; color: #999; margin: 0 1px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">CV</div>
+  <div class="info">
+    <h1>SuperCV Export</h1>
+    <p>无水印矢量 PDF 导出</p>
+  </div>
+</div>
+<div class="body">
+  <div class="toggle-row">
+    <span class="toggle-label">
+      启用导出
+      <span class="sub">开启后可使用快捷键导出</span>
+    </span>
+    <label class="switch">
+      <input type="checkbox" id="toggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <button class="btn-export" id="btnExport" disabled>无水印导出 PDF</button>
+  <div class="status-row">
+    <span class="status-dot off" id="statusDot"></span>
+    <span id="statusText">未启用</span>
+  </div>
+  <div class="hint">
+    快捷键 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
+  </div>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "SuperCV Export",
+  "version": "1.0",
+  "description": "一键导出超级简历为无水印矢量PDF，100%保留模板样式与排版",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "SuperCV Export",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.wondercv.com/cvs/*/editor*"],
+      "js": ["inject.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://www.wondercv.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["core.js"],
+      "matches": ["https://www.wondercv.com/*"]
+    }
+  ]
+}
