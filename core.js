@@ -29,15 +29,15 @@
   var s = document.createElement('style'); s.id = 'wcv-core-css';
   s.textContent = '' +
     '#wcv-cover{display:none;position:fixed;inset:0;z-index:999999;background:#e8ecf1;overflow-y:auto}' +
-    '#wcv-cover.on{display:flex;justify-content:center;align-items:flex-start;padding:0}' +
+    '#wcv-cover.on{display:block;padding:0}' +
     '#wcv-cover .wcv-close{position:fixed;top:12px;right:12px;z-index:10000002;width:32px;height:32px;border-radius:50%;border:1px solid #ddd;background:#fff;font-size:14px;cursor:pointer;color:#999;box-shadow:0 1px 6px rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center}' +
     '@media print{' +
       '@page{size:A4;margin:0}' +
       'html,body{width:100%!important;margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}' +
       'body>*:not(#wcv-cover){display:none!important}' +
-      '#wcv-cover{display:flex!important;justify-content:center!important;position:static!important;width:100%!important;height:auto!important;overflow:visible!important;background:#fff!important;padding:0!important;margin:0!important}' +
-      '#wcv-cover>*{margin:0 auto!important;padding:0!important;box-shadow:none!important;overflow:visible!important}' +
-      '#wcv-cover [class*="page-index-"]{margin:0 auto!important;padding:0!important;box-shadow:none!important;overflow:visible!important;page-break-after:always}' +
+      '#wcv-cover{display:block!important;position:static!important;width:210mm!important;height:auto!important;overflow:visible!important;background:#fff!important;padding:0!important;margin:0!important}' +
+      '#wcv-cover>*{width:210mm!important;max-width:210mm!important;margin:0!important;padding:0!important;box-shadow:none!important;overflow:visible!important}' +
+      '#wcv-cover [class*="page-index-"]{width:210mm!important;max-width:210mm!important;margin:0!important;padding:0!important;box-shadow:none!important;overflow:visible!important;page-break-after:always}' +
       '#wcv-cover [class*="page-index-"]:last-child{page-break-after:avoid}' +
       'img,svg,canvas{display:none!important}' +
       '*{background-image:none!important}' +
@@ -97,11 +97,11 @@
     var origW = window.getComputedStyle(cv).width;
     var clone = cv.cloneNode(true);
 
-    clone.style.setProperty('width', origW, 'important');
-    clone.style.setProperty('max-width', origW, 'important');
-    clone.style.setProperty('margin', '0 auto', 'important');
-    clone.style.setProperty('margin-left', 'auto', 'important');
-    clone.style.setProperty('margin-right', 'auto', 'important');
+    clone.style.setProperty('width', '210mm', 'important');
+    clone.style.setProperty('max-width', '210mm', 'important');
+    clone.style.setProperty('margin', '0', 'important');
+    clone.style.setProperty('margin-left', '0', 'important');
+    clone.style.setProperty('margin-right', '0', 'important');
 
     nukeWatermark(clone);
 
