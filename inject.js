@@ -3,33 +3,56 @@
  */
 (function() {
   'use strict';
-  var injected = false;
+  var loaded = false;
 
-  function inject() {
-    if (injected) return;
-    var s = document.createElement('script');
-    s.src = chrome.runtime.getURL('core.js');
-    (document.head || document.documentElement).appendChild(s);
-    injected = true;
+  function injectAndWait(cb, retries) {
+    retries = retries || 0;
+
+    // 如果 core.js 还没注入, 先注入
+    var existing = document.querySelector('script[src*="core.js"]');
+    if (!existing) {
+      var s = document.createElement('script');
+      s.src = chrome.runtime.getURL('core.js');
+      (document.head || document.documentElement).appendChild(s);
+    }
+
+    // 等待 __wcvExport 就绪
+    var maxRetries = 15;
+    function check() {
+      if (window.__wcvExport || document.querySelector('script[src*="core.js"]')) {
+        // 注入执行脚本
+        var exec = document.createElement('script');
+        exec.textContent = 'try{window.__wcvExport();}catch(e){console.error("[SuperCV]",e);}';
+        (document.head || document.documentElement).appendChild(exec);
+        exec.remove();
+        if (cb) cb(true);
+        return;
+      }
+      retries++;
+      if (retries < maxRetries) {
+        setTimeout(check, 200);
+      } else {
+        console.error('[SuperCV] core.js 注入超时');
+        if (cb) cb(false);
+      }
+    }
+    check();
   }
 
   // 页面加载即注入核心脚本
-  inject();
+  var s = document.createElement('script');
+  s.src = chrome.runtime.getURL('core.js');
+  (document.head || document.documentElement).appendChild(s);
 
-  // 导出: 直接注入执行脚本(保持用户手势链路)
-  function triggerExport() {
-    inject();
-    // 直接注入执行脚本, 不经过 postMessage/setTimeout
-    var s = document.createElement('script');
-    s.textContent = 'if(window.__wcvExport)window.__wcvExport();';
-    (document.head || document.documentElement).appendChild(s);
-    s.remove();
-  }
+  s.onload = function() { loaded = true; };
+  s.onerror = function() { console.error('[SuperCV] core.js 加载失败'); };
 
   chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
     if (msg.action === 'export') {
-      triggerExport();
-      sendResponse({ ok: true });
+      injectAndWait(function(ok) {
+        sendResponse({ ok: ok });
+      });
+      return true; // 保持消息通道 open
     }
   });
 })();
