@@ -20,11 +20,10 @@
     var maxRetries = 15;
     function check() {
       if (window.__wcvExport || document.querySelector('script[src*="core.js"]')) {
-        // 注入执行脚本
+        // 用 src 加载触发脚本 (避免 CSP inline script 拦截)
         var exec = document.createElement('script');
-        exec.textContent = 'try{window.__wcvExport();}catch(e){console.error("[SuperCV]",e);}';
+        exec.src = chrome.runtime.getURL('trigger.js');
         (document.head || document.documentElement).appendChild(exec);
-        exec.remove();
         if (cb) cb(true);
         return;
       }
