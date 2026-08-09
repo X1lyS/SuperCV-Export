@@ -17,8 +17,10 @@
   .btn-export:hover:not(:disabled) { background: #c01d22; }
   .btn-export:active:not(:disabled) { background: #b01a1f; }
   .btn-export:disabled { background: #e8e8e8; color: #bbb; cursor: not-allowed; }
-  .hint { margin-top: 14px; font-size: 11px; color: #bbb; text-align: center; }
-  .hint kbd { display: inline-block; padding: 1px 5px; border: 1px solid #e8e8e8; border-radius: 3px; background: #fafafa; font-family: inherit; font-size: 10px; color: #999; margin: 0 1px; }
+  .status { margin-top: 14px; font-size: 11px; color: #bbb; text-align: center; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .status .dot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; flex-shrink: 0; }
+  .status.ok { color: #16a34a; }
+  .status.ok .dot { background: #22c55e; }
 </style>
 </head>
 <body>
@@ -28,10 +30,8 @@
   <p>无水印矢量 PDF 导出</p>
 </div>
 <div class="body">
-  <button class="btn-export" id="btnExport">无水印导出 PDF</button>
-  <div class="hint">
-    快捷键 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
-  </div>
+  <button class="btn-export" id="btnExport" disabled>无水印导出 PDF</button>
+  <div class="status" id="statusTip"><span class="dot"></span><span id="statusText">检测中...</span></div>
 </div>
 <script src="popup.js"></script>
 </body>

@@ -9,6 +9,10 @@
  */
 (function() {
   'use strict';
+  // 幂等: background 可能对同一页面 executeScript 重复注入
+  if (window.__wcvInjected) return;
+  window.__wcvInjected = true;
+
   var coreReady = false;
 
   // ── 注入 core.js (仅一次) ──
@@ -59,11 +63,37 @@
     (document.head || document.documentElement).appendChild(exec);
   }
 
+  // ── 就绪状态检测: 简历 DOM 容器已渲染 + core.js 已加载 = 可导出 ──
+  function cvReady() {
+    if (!coreReady) return false;
+    return !!document.querySelector('[class*="resume-preview-wrapper"], [class*="cvs-component"], #cvsEditorDom');
+  }
+
+  // 状态变化时主动上报 background (绿点指示)
+  var lastReady = null;
+  function reportStatus() {
+    var ready = cvReady();
+    if (ready !== lastReady) {
+      lastReady = ready;
+      try { chrome.runtime.sendMessage({ type: 'wcv-status', ready: ready }); } catch(_) {}
+    }
+  }
+  // MutationObserver 实时检测 DOM (简历容器一出现即上报), 轮询作兜底
+  new MutationObserver(function() { reportStatus(); })
+    .observe(document.documentElement, { childList: true, subtree: true });
+  setInterval(reportStatus, 1500);
+
   // ── 页面加载即注入核心 ──
   injectCore();
+  reportStatus();
 
   // ── 消息监听 ──
   chrome.runtime.onMessage.addListener(function(msg, sender, sendResponse) {
+    if (msg.action === 'wcv-query') {
+      // background / popup 查询就绪状态
+      sendResponse({ ready: cvReady() });
+      return true;
+    }
     if (msg.action === 'export') {
       triggerExport(function(ok) {
         sendResponse({ ok: ok });
