@@ -1,6 +1,7 @@
 # SuperCV Export
 
 一键导出超级简历（WonderCV）为**无水印矢量 PDF**。
+![弹出面板](docs/popup-ready.jpg)
 
 > Chrome 扩展 · 点击即用 · 模板样式完整保留
 
@@ -14,6 +15,9 @@
 4. 点击左上角 **加载已解压的扩展程序**，选择本项目的 `SuperCV-Export-main` 文件夹
 5. 点击浏览器工具栏右侧的 **拼图图标** 🧩，找到 **SuperCV Export**，点旁边的 **图钉** 📌 把它固定到工具栏
 
+<img width="2934" height="1572" alt="image" src="https://github.com/user-attachments/assets/991e7772-b2ec-4a7e-b60b-768c804f5400" />
+
+
 安装完成，工具栏上会出现 SE 图标。
 
 ---
@@ -23,6 +27,8 @@
 ### 第 1 步：进入简历编辑页
 
 在超级简历官网打开你的简历，进入**编辑页面**（地址栏网址形如 `https://www.wondercv.com/cvs/xxx/editor`）。
+
+<img width="2928" height="1532" alt="image" src="https://github.com/user-attachments/assets/06ed2581-a11a-4b5c-93dd-4a7251f11bd6" />
 
 > ⚠️ 只有在简历编辑页才能导出。官网首页、模板列表页等其他页面均不可导出。
 
@@ -34,6 +40,8 @@
 |---|---|---|
 | 右下角有 **绿色小点** | 当前页面已就绪 | ✅ 可以 |
 | 没有绿点 | 当前页面不是简历编辑页 | ❌ 按钮禁用 |
+
+<img width="2610" height="1456" alt="image" src="https://github.com/user-attachments/assets/7eeb44e9-94db-47a7-8d0c-1ddeedf8bb7c" />
 
 绿点会在你进入编辑页后 1~2 秒内自动出现，离开编辑页自动消失，**无需手动刷新页面**。
 
@@ -47,6 +55,7 @@
 点击后页面会显示导出预览，并自动弹出打印对话框。
 
 最后点击 **保存**，选择位置即可得到无水印矢量 PDF。
+![打印设置](docs/print-settings.jpg)
 
 ---
 
