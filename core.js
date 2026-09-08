@@ -6,6 +6,7 @@
   console.log('%c[SuperCV] core v1.4 loaded', 'color:#dc2127;font-weight:bold');
   var $ = function(s) { return document.querySelector(s); };
   var $$ = function(s) { return [].slice.call(document.querySelectorAll(s)); };
+  var PAGE_SELECTOR = '[class*="page-index-"]';
 
   // ═══ 反调试 ═══
   for (var i = 99999; i >= 1; i--) { clearInterval(i); clearTimeout(i); }
@@ -44,8 +45,8 @@
       /* 编辑器按缩放后视觉高度给容器内联写入 calc() 占位高度+overflow:hidden, 恢复满宽后必须解除, 否则底部留白/裁切 */
       '#wcv-cover [class*="resume-main"],#wcv-cover [class*="resume-preview-wrapper"]{height:auto!important;min-height:0!important;overflow:visible!important}' +
       '#wcv-cover,#wcv-cover *{transition:none!important;animation:none!important}' +
-      '#wcv-cover [class*="page-index-"]{margin:0 auto!important;box-shadow:none!important;page-break-after:always}' +
-      '#wcv-cover [class*="page-index-"]:last-child{page-break-after:avoid}' +
+      '#wcv-cover [data-wcv-page]{margin:0 auto!important;box-shadow:none!important;break-after:page;page-break-after:always}' +
+      '#wcv-cover [data-wcv-last-page]{break-after:auto!important;page-break-after:auto!important}' +
       /* 水印仅按 class 特征精准隐藏; 不再无差别杀 img/svg/背景图/伪元素(模板图标与装饰依赖它们);
          cv-pattern 已证实是模板花纹装饰图(logo.wondercv.com/banners/* 弧线/波浪纹理), 必须保留 */
       '[class*="watermark"],[class*="water-mark"],[class*="mark-layer"]{display:none!important;opacity:0!important}' +
@@ -55,15 +56,41 @@
   document.head.appendChild(s);
 
   // ═══ 查找简历容器 ═══
+  function countPages(el) {
+    if (!el || el.nodeType !== 1) return 0;
+    var count = el.matches && el.matches(PAGE_SELECTOR) ? 1 : 0;
+    return count + el.querySelectorAll(PAGE_SELECTOR).length;
+  }
+
+  function markPages(root) {
+    if (!root || root.nodeType !== 1) return 0;
+    var pages = [];
+    if (root.matches && root.matches(PAGE_SELECTOR)) pages.push(root);
+    pages = pages.concat([].slice.call(root.querySelectorAll(PAGE_SELECTOR)));
+    pages.forEach(function(el) {
+      el.removeAttribute('data-wcv-last-page');
+      el.setAttribute('data-wcv-page', '1');
+    });
+    if (pages.length) pages[pages.length - 1].setAttribute('data-wcv-last-page', '1');
+    return pages.length;
+  }
+
   function findCV() {
     var best = null, bestScore = -1;
     var all = document.querySelectorAll('*');
     for (var i = 0; i < all.length; i++) {
       var el = all[i], cls = (el.className || '').toString();
-      var score = 0;
-      if (cls.indexOf('resume-preview-wrapper') >= 0) score = 100;
-      else if (cls.indexOf('cvs-component') >= 0) score = 99;
-      else if (el.id === 'cvsEditorDom') score = 98;
+      var score = -1;
+      var pageCount = countPages(el);
+      if (cls.indexOf('resume-preview-wrapper') >= 0) score = 3000;
+      else if (cls.indexOf('cvs-component') >= 0) score = 2000;
+      else if (el.id === 'cvsEditorDom') score = 1000;
+      if (score < 0) continue;
+
+      // 优先选包含完整分页内容的外层容器，避免误选到第一页 wrapper。
+      score += pageCount * 10000;
+      if (el.clientHeight) score += Math.min(el.clientHeight, 9999);
+
       if (score > bestScore) { bestScore = score; best = el; }
     }
     return best;
@@ -107,6 +134,8 @@
 
     // 不再锁死屏幕像素宽度: 简历内容本身按 A4 满宽排版, 锁宽+保留 scale 变换会导致打印左右留白
     var clone = cv.cloneNode(true);
+    var pageCount = markPages(clone);
+    console.log('[SuperCV] pages detected:', pageCount);
 
     nukeWatermark(clone);
 
