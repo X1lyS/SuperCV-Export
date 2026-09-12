@@ -9,20 +9,37 @@
  */
 (function() {
   'use strict';
+  var CORE_VERSION = '1.4.0';
+  try { console.log('[SuperCV][trace] inject-start', CORE_VERSION); } catch(_) {}
   // 幂等: background 可能对同一页面 executeScript 重复注入
-  if (window.__wcvInjected) return;
+  if (window.__wcvInjected && window.__wcvCoreVersion === CORE_VERSION) return;
   window.__wcvInjected = true;
 
   var coreReady = false;
 
   // ── 注入 core.js (仅一次) ──
   function injectCore() {
-    if (document.getElementById('wcv-core-script')) return;
+    var current = document.getElementById('wcv-core-script');
+    if (current && current.dataset.wcvVersion === CORE_VERSION) {
+      coreReady = true;
+      return;
+    }
+    if (current) current.remove();
+    var oldStyle = document.getElementById('wcv-core-css');
+    if (oldStyle) oldStyle.remove();
+
     var s = document.createElement('script');
     s.id = 'wcv-core-script';
-    s.src = chrome.runtime.getURL('core.js');
-    s.onload = function() { coreReady = true; };
-    s.onerror = function() { console.error('[SuperCV] core.js 加载失败'); };
+    s.dataset.wcvVersion = CORE_VERSION;
+    s.src = chrome.runtime.getURL('core.js') + '?v=' + CORE_VERSION;
+    s.onload = function() {
+      coreReady = true;
+      try { console.log('[SuperCV][trace] core-loaded-from-inject', CORE_VERSION); } catch(_) {}
+    };
+    s.onerror = function() {
+      console.error('[SuperCV] core.js 加载失败');
+      try { console.error('[SuperCV][trace] core-load-error', CORE_VERSION); } catch(_) {}
+    };
     (document.head || document.documentElement).appendChild(s);
   }
 
